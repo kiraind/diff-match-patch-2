@@ -81,7 +81,7 @@ test('testPatchToText', t => {
 test('testPatchAddContext', t => {
   dmp.patchMargin = 4
   let p = dmp.patch_fromText('@@ -21,4 +21,10 @@\n-jump\n+somersault\n')[0]
-  dmp.patch_addContext_(p, 'The quick brown fox jumps over the lazy dog.')
+  dmp.patch_addContext(p, 'The quick brown fox jumps over the lazy dog.')
   t.equals(
     p.toString(),
     '@@ -17,12 +17,18 @@\n fox \n-jump\n+somersault\n s ov\n'
@@ -89,7 +89,7 @@ test('testPatchAddContext', t => {
 
   // Same, but not enough trailing context.
   p = dmp.patch_fromText('@@ -21,4 +21,10 @@\n-jump\n+somersault\n')[0]
-  dmp.patch_addContext_(p, 'The quick brown fox jumps.')
+  dmp.patch_addContext(p, 'The quick brown fox jumps.')
   t.equals(
     p.toString(),
     '@@ -17,10 +17,16 @@\n fox \n-jump\n+somersault\n s.\n'
@@ -97,7 +97,7 @@ test('testPatchAddContext', t => {
 
   // Same, but not enough leading context.
   p = dmp.patch_fromText('@@ -3 +3,2 @@\n-e\n+at\n')[0]
-  dmp.patch_addContext_(p, 'The quick brown fox jumps.')
+  dmp.patch_addContext(p, 'The quick brown fox jumps.')
   t.equals(
     p.toString(),
     '@@ -1,7 +1,8 @@\n Th\n-e\n+at\n  qui\n'
@@ -105,7 +105,7 @@ test('testPatchAddContext', t => {
 
   // Same, but with ambiguity.
   p = dmp.patch_fromText('@@ -3 +3,2 @@\n-e\n+at\n')[0]
-  dmp.patch_addContext_(p, 'The quick brown fox jumps.  The quick brown fox crashes.')
+  dmp.patch_addContext(p, 'The quick brown fox jumps.  The quick brown fox crashes.')
   t.equals(
     p.toString(),
     '@@ -1,27 +1,28 @@\n Th\n-e\n+at\n  quick brown fox jumps. \n'

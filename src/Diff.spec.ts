@@ -73,33 +73,33 @@ test('testDiffCommonOverlap', t => {
   // Detect any suffix/prefix overlap.
   // Null case.
   t.equals(
-    dmp.diff_commonOverlap_('', 'abcd'),
+    dmp.diff_commonOverlap('', 'abcd'),
     0
   )
 
   // Whole case.
   t.equals(
-    dmp.diff_commonOverlap_('abc', 'abcd'),
+    dmp.diff_commonOverlap('abc', 'abcd'),
     3
   )
 
   // No overlap.
   t.equals(
-    dmp.diff_commonOverlap_('123456', 'abcd'),
+    dmp.diff_commonOverlap('123456', 'abcd'),
     0
   )
 
   // Overlap.
   t.equals(
     3,
-    dmp.diff_commonOverlap_('123456xxx', 'xxxabcd')
+    dmp.diff_commonOverlap('123456xxx', 'xxxabcd')
   )
 
   // Unicode.
   // Some overly clever languages (C#) may treat ligatures as equal to their
   // component letters.  E.g. U+FB01 == 'fi'
   t.equals(
-    dmp.diff_commonOverlap_('fi', '\ufb01i'),
+    dmp.diff_commonOverlap('fi', '\ufb01i'),
     0
   )
 
@@ -111,63 +111,63 @@ test('testDiffHalfMatch', t => {
   dmp.diffTimeout = 1
   // No match.
   t.equals(
-    dmp.diff_halfMatch_('1234567890', 'abcdef'),
+    dmp.diff_halfMatch('1234567890', 'abcdef'),
     null
   )
 
   t.equals(
-    dmp.diff_halfMatch_('12345', '23'),
+    dmp.diff_halfMatch('12345', '23'),
     null
   )
 
   // Single Match.
   t.isEquivalent(
-    dmp.diff_halfMatch_('1234567890', 'a345678z'),
+    dmp.diff_halfMatch('1234567890', 'a345678z'),
     ['12', '90', 'a', 'z', '345678']
   )
 
   t.isEquivalent(
-    dmp.diff_halfMatch_('a345678z', '1234567890'),
+    dmp.diff_halfMatch('a345678z', '1234567890'),
     ['a', 'z', '12', '90', '345678']
   )
 
   t.isEquivalent(
-    dmp.diff_halfMatch_('abc56789z', '1234567890'),
+    dmp.diff_halfMatch('abc56789z', '1234567890'),
     ['abc', 'z', '1234', '0', '56789']
   )
 
   t.isEquivalent(
-    dmp.diff_halfMatch_('a23456xyz', '1234567890'),
+    dmp.diff_halfMatch('a23456xyz', '1234567890'),
     ['a', 'xyz', '1', '7890', '23456']
   )
 
   // Multiple Matches.
   t.isEquivalent(
-    dmp.diff_halfMatch_('121231234123451234123121', 'a1234123451234z'),
+    dmp.diff_halfMatch('121231234123451234123121', 'a1234123451234z'),
     ['12123', '123121', 'a', 'z', '1234123451234']
   )
 
   t.isEquivalent(
-    dmp.diff_halfMatch_('x-=-=-=-=-=-=-=-=-=-=-=-=', 'xx-=-=-=-=-=-=-='),
+    dmp.diff_halfMatch('x-=-=-=-=-=-=-=-=-=-=-=-=', 'xx-=-=-=-=-=-=-='),
     ['', '-=-=-=-=-=', 'x', '', 'x-=-=-=-=-=-=-=']
   )
 
   t.isEquivalent(
-    dmp.diff_halfMatch_('-=-=-=-=-=-=-=-=-=-=-=-=y', '-=-=-=-=-=-=-=yy'),
+    dmp.diff_halfMatch('-=-=-=-=-=-=-=-=-=-=-=-=y', '-=-=-=-=-=-=-=yy'),
     ['-=-=-=-=-=', '', '', 'y', '-=-=-=-=-=-=-=y']
   )
 
   // Non-optimal halfmatch.
   // Optimal diff would be -q+x=H-i+e=lloHe+Hu=llo-Hew+y not -qHillo+x=HelloHe-w+Hulloy
   t.isEquivalent(
-    dmp.diff_halfMatch_('qHilloHelloHew', 'xHelloHeHulloy'),
+    dmp.diff_halfMatch('qHilloHelloHew', 'xHelloHeHulloy'),
     ['qHillo', 'w', 'x', 'Hulloy', 'HelloHe']
   )
 
   // Optimal no halfmatch.
   dmp.diffTimeout = 0
   t.equals(
-    dmp.diff_halfMatch_('qHilloHelloHew', 'xHelloHeHulloy'),
+    dmp.diff_halfMatch('qHilloHelloHew', 'xHelloHeHulloy'),
     null
   )
 
@@ -177,17 +177,17 @@ test('testDiffHalfMatch', t => {
 test('testDiffLinesToChars', t => {
   // Convert lines down to characters.
   t.isEquivalent(
-    dmp.diff_linesToChars_('alpha\nbeta\nalpha\n', 'beta\nalpha\nbeta\n'),
+    dmp.diff_linesToChars('alpha\nbeta\nalpha\n', 'beta\nalpha\nbeta\n'),
     { chars1: '\x01\x02\x01', chars2: '\x02\x01\x02', lineArray: ['', 'alpha\n', 'beta\n'] }
   )
 
   t.isEquivalent(
-    dmp.diff_linesToChars_('', 'alpha\r\nbeta\r\n\r\n\r\n'),
+    dmp.diff_linesToChars('', 'alpha\r\nbeta\r\n\r\n\r\n'),
     { chars1: '', chars2: '\x01\x02\x03\x03', lineArray: ['', 'alpha\r\n', 'beta\r\n', '\r\n'] }
   )
 
   t.isEquivalent(
-    dmp.diff_linesToChars_('a', 'b'),
+    dmp.diff_linesToChars('a', 'b'),
     { chars1: '\x01', chars2: '\x02', lineArray: ['', 'a', 'b'] }
   )
 
@@ -213,7 +213,7 @@ test('testDiffLinesToChars', t => {
 
   lineList.unshift('')
   t.isEquivalent(
-    dmp.diff_linesToChars_(lines, ''),
+    dmp.diff_linesToChars(lines, ''),
     { chars1: chars, chars2: '', lineArray: lineList }
   )
 
@@ -223,7 +223,7 @@ test('testDiffLinesToChars', t => {
 test('testDiffCharsToLines', t => {
   // Convert chars up to lines.
   let diffs: Diff[] = [[Operation.DIFF_EQUAL, '\x01\x02\x01'], [Operation.DIFF_INSERT, '\x02\x01\x02']]
-  dmp.diff_charsToLines_(diffs, ['', 'alpha\n', 'beta\n'])
+  dmp.diff_charsToLines(diffs, ['', 'alpha\n', 'beta\n'])
   t.isEquivalent(
     diffs,
     [[Operation.DIFF_EQUAL, 'alpha\nbeta\nalpha\n'], [Operation.DIFF_INSERT, 'beta\nalpha\nbeta\n']]
@@ -251,7 +251,7 @@ test('testDiffCharsToLines', t => {
 
   lineList.unshift('')
   diffs = [[Operation.DIFF_DELETE, chars]]
-  dmp.diff_charsToLines_(diffs, lineList)
+  dmp.diff_charsToLines(diffs, lineList)
   t.isEquivalent(
     diffs,
     [[Operation.DIFF_DELETE, lines]]
@@ -263,9 +263,9 @@ test('testDiffCharsToLines', t => {
     lineList[i] = i.toString() + '\n'
   }
   chars = lineList.join('')
-  const results = dmp.diff_linesToChars_(chars, '')
+  const results = dmp.diff_linesToChars(chars, '')
   diffs = [[Operation.DIFF_INSERT, results.chars1]]
-  dmp.diff_charsToLines_(diffs, results.lineArray)
+  dmp.diff_charsToLines(diffs, results.lineArray)
   t.equals(
     diffs[0][1],
     chars
@@ -724,13 +724,13 @@ test('testDiffBisect', t => {
   // the insertion and deletion pairs are swapped.
   // If the order changes, tweak this test as required.
   t.isEquivalent(
-    dmp.diff_bisect_(a, b, Number.MAX_VALUE),
+    dmp.diff_bisect(a, b, Number.MAX_VALUE),
     [[Operation.DIFF_DELETE, 'c'], [Operation.DIFF_INSERT, 'm'], [Operation.DIFF_EQUAL, 'a'], [Operation.DIFF_DELETE, 't'], [Operation.DIFF_INSERT, 'p']]
   )
 
   // Timeout.
   t.isEquivalent(
-    dmp.diff_bisect_(a, b, 0),
+    dmp.diff_bisect(a, b, 0),
     [[Operation.DIFF_DELETE, 'cat'], [Operation.DIFF_INSERT, 'map']]
   )
 

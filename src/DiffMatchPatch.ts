@@ -88,7 +88,7 @@ export default class DiffMatchPatch {
     text2 = text2.substring(0, text2.length - commonlength)
 
     // Compute the diff on the middle block.
-    const diffs = this.diff_compute_(text1, text2, checklines, deadline)
+    const diffs = this.diff_compute(text1, text2, checklines, deadline)
 
     // Restore the prefix and suffix.
     if (commonprefix !== '') {
@@ -113,7 +113,7 @@ export default class DiffMatchPatch {
    * @return {Diff[]} Array of diff tuples.
    * @private
    */
-  diff_compute_ (
+  diff_compute (
     text1: string,
     text2: string,
     checklines: boolean,
@@ -160,7 +160,7 @@ export default class DiffMatchPatch {
     }
 
     // Check to see if the problem can be split in two.
-    const hm = this.diff_halfMatch_(text1, text2)
+    const hm = this.diff_halfMatch(text1, text2)
 
     if (hm !== null) {
       // A half-match was found, sort out the return data.
@@ -182,10 +182,10 @@ export default class DiffMatchPatch {
     }
 
     if (checklines && text1.length > 100 && text2.length > 100) {
-      return this.diff_lineMode_(text1, text2, deadline)
+      return this.diff_lineMode(text1, text2, deadline)
     }
 
-    return this.diff_bisect_(text1, text2, deadline)
+    return this.diff_bisect(text1, text2, deadline)
   }
 
   /**
@@ -198,13 +198,13 @@ export default class DiffMatchPatch {
    * @return {Diff[]} Array of diff tuples.
    * @private
    */
-  diff_lineMode_ (
+  diff_lineMode (
     text1: string,
     text2: string,
     deadline: number
   ): Diff[] {
   // Scan the text on a line-by-line basis first.
-    const a = this.diff_linesToChars_(text1, text2)
+    const a = this.diff_linesToChars(text1, text2)
     text1 = a.chars1
     text2 = a.chars2
     const linearray = a.lineArray
@@ -212,7 +212,7 @@ export default class DiffMatchPatch {
     const diffs = this.diff_main(text1, text2, false, deadline)
 
     // Convert the diff back to original text.
-    this.diff_charsToLines_(diffs, linearray)
+    this.diff_charsToLines(diffs, linearray)
     // Eliminate freak matches (e.g. blank lines)
     this.diff_cleanupSemantic(diffs)
 
@@ -271,7 +271,7 @@ export default class DiffMatchPatch {
    * @return {Diff[]} Array of diff tuples.
    * @private
    */
-  diff_bisect_ (text1: string, text2: string, deadline: number): Diff[] {
+  diff_bisect (text1: string, text2: string, deadline: number): Diff[] {
     // Cache the text lengths to prevent multiple calls.
     const text1Length = text1.length
     const text2Length = text2.length
@@ -333,7 +333,7 @@ export default class DiffMatchPatch {
             const x2 = text1Length - v2[k2Offset]
             if (x1 >= x2) {
               // Overlap detected.
-              return this.diff_bisectSplit_(text1, text2, x1, y1, deadline)
+              return this.diff_bisectSplit(text1, text2, x1, y1, deadline)
             }
           }
         }
@@ -371,7 +371,7 @@ export default class DiffMatchPatch {
             x2 = text1Length - x2
             if (x1 >= x2) {
             // Overlap detected.
-              return this.diff_bisectSplit_(text1, text2, x1, y1, deadline)
+              return this.diff_bisectSplit(text1, text2, x1, y1, deadline)
             }
           }
         }
@@ -396,7 +396,7 @@ export default class DiffMatchPatch {
    * @return {Diff[]} Array of diff tuples.
    * @private
    */
-  diff_bisectSplit_ (
+  diff_bisectSplit (
     text1: string,
     text2: string,
     x: number,
@@ -426,7 +426,7 @@ export default class DiffMatchPatch {
    *     The zeroth element of the array of unique strings is intentionally blank.
    * @private
    */
-  diff_linesToChars_ (text1: string, text2: string): {
+  diff_linesToChars (text1: string, text2: string): {
     chars1: string
     chars2: string
     lineArray: string[]
@@ -493,7 +493,7 @@ export default class DiffMatchPatch {
    * @param {string[]} lineArray Array of unique strings.
    * @private
    */
-  diff_charsToLines_ (diffs: Diff[], lineArray: string[]): void {
+  diff_charsToLines (diffs: Diff[], lineArray: string[]): void {
     for (let i = 0; i < diffs.length; i++) {
       const chars = diffs[i][1]
       const text = []
@@ -576,7 +576,7 @@ export default class DiffMatchPatch {
    *     string and the start of the second string.
    * @private
    */
-  diff_commonOverlap_ (text1: string, text2: string): number {
+  diff_commonOverlap (text1: string, text2: string): number {
   // Cache the text lengths to prevent multiple calls.
     const text1Length = text1.length
     const text2Length = text2.length
@@ -629,7 +629,7 @@ export default class DiffMatchPatch {
    *     text2 and the common middle.  Or null if there was no match.
    * @private
    */
-  diff_halfMatch_ (text1: string, text2: string): [string, string, string, string, string] | null {
+  diff_halfMatch (text1: string, text2: string): [string, string, string, string, string] | null {
     if (this.diffTimeout <= 0) {
       // Don't risk returning a non-optimal diff if we have unlimited time.
       return null
@@ -812,8 +812,8 @@ export default class DiffMatchPatch {
       ) {
         const deletion = diffs[pointer - 1][1]
         const insertion = diffs[pointer][1]
-        const overlapLength1 = this.diff_commonOverlap_(deletion, insertion)
-        const overlapLength2 = this.diff_commonOverlap_(insertion, deletion)
+        const overlapLength1 = this.diff_commonOverlap(deletion, insertion)
+        const overlapLength2 = this.diff_commonOverlap(insertion, deletion)
         if (overlapLength1 >= overlapLength2) {
           if (
             overlapLength1 >= deletion.length / 2 ||
@@ -1474,7 +1474,7 @@ export default class DiffMatchPatch {
       return loc
     } else {
       // Do a fuzzy compare.
-      return this.match_bitap_(text, pattern, loc)
+      return this.match_bitap(text, pattern, loc)
     }
   }
 
@@ -1485,15 +1485,14 @@ export default class DiffMatchPatch {
    * @param {string} pattern The pattern to search for.
    * @param {number} loc The location to search around.
    * @return {number} Best match index or -1.
-   * @private
    */
-  match_bitap_ (text: string, pattern: string, loc: number): number {
+  match_bitap (text: string, pattern: string, loc: number): number {
     if (pattern.length > this.matchMaxBits) {
       throw new Error('Pattern too long for this browser.')
     }
 
     // Initialise the alphabet.
-    const s = this.match_alphabet_(pattern)
+    const s = this.match_alphabet(pattern)
 
     /**
      * Compute and return the score for a match with e errors and x location.
@@ -1599,7 +1598,7 @@ export default class DiffMatchPatch {
    * @return {Record<string, number>} Hash of character locations.
    * @private
    */
-  match_alphabet_ (pattern: string): Record<string, number> {
+  match_alphabet (pattern: string): Record<string, number> {
     const s: Record<string, number> = {}
     for (let i = 0; i < pattern.length; i++) {
       s[pattern.charAt(i)] = 0
@@ -1619,7 +1618,7 @@ export default class DiffMatchPatch {
    * @param {string} text Source text.
    * @private
    */
-  patch_addContext_ (patch: PatchObj, text: string): void {
+  patch_addContext (patch: PatchObj, text: string): void {
     if (text.length === 0) {
       return
     }
@@ -1799,7 +1798,7 @@ export default class DiffMatchPatch {
           } else if (diffText.length >= 2 * this.patchMargin) {
             // Time for a new patch.
             if (patchDiffLength !== 0) {
-              this.patch_addContext_(patch, prepatchText)
+              this.patch_addContext(patch, prepatchText)
               patches.push(patch)
               patch = new PatchObj()
               patchDiffLength = 0
@@ -1824,7 +1823,7 @@ export default class DiffMatchPatch {
     }
     // Pick up the leftover patch if not empty.
     if (patchDiffLength !== 0) {
-      this.patch_addContext_(patch, prepatchText)
+      this.patch_addContext(patch, prepatchText)
       patches.push(patch)
     }
 
