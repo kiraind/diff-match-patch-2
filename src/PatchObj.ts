@@ -1,11 +1,11 @@
 import Operation from './types/Operation'
-import Diff from './types/Diff'
+import DiffObj from './types/DiffObj'
 
 /**
  * Class representing one patch operation.
  */
 export default class PatchObj {
-  diffs: Diff[]
+  diffs: DiffObj[]
   start1: number | null
   start2: number | null
   length1: number

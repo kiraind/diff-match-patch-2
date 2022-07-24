@@ -25,12 +25,12 @@
 import DiffMatchPatch from './DiffMatchPatch'
 
 import Operation from './types/Operation'
-import Diff from './types/Diff'
+import DiffObj from './types/DiffObj'
 import PatchObj from './PatchObj'
 
 export default DiffMatchPatch
 export {
   Operation,
-  Diff,
+  DiffObj,
   PatchObj
 }

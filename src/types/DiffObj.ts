@@ -5,6 +5,6 @@ import Operation from './Operation'
  * [[Operation.DIFF_DELETE, 'Hello'], [Operation.DIFF_INSERT, 'Goodbye'], [Operation.DIFF_EQUAL, ' world.']]
  * which means: delete 'Hello', add 'Goodbye' and keep ' world.'
  */
-type Diff = [Operation, string]
+type DiffObj = [Operation, string]
 
-export default Diff
+export default DiffObj
