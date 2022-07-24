@@ -18,4 +18,5 @@
 
 import './Diff.spec'
 import './Match.spec'
+import './PatchObj.spec'
 import './Patch.spec'
