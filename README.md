@@ -25,7 +25,7 @@ An array of differences is computed which describe the transformation of text1 i
 
 ```diff_main("Good dog", "Bad dog") → [(-1, "Goo"), (1, "Ba"), (0, "d dog")]```
 
-Despite the large number of optimisations used in this function, diff can take a while to compute. The `DiffMatchPatch.Diff_Timeout` property is available to set how many seconds any diff's exploration phase may take. The default value is 1.0. A value of 0 disables the timeout and lets diff run until completion. Should diff timeout, the return value will still be a valid difference, though probably non-optimal.
+Despite the large number of optimisations used in this function, diff can take a while to compute. The `DiffMatchPatch.diffTimeout` property is available to set how many seconds any diff's exploration phase may take. The default value is 1.0. A value of 0 disables the timeout and lets diff run until completion. Should diff timeout, the return value will still be a valid difference, though probably non-optimal.
 
 ### diff_cleanupSemantic(diffs) → null
 
@@ -35,7 +35,7 @@ A diff of two unrelated texts can be filled with coincidental matches. For examp
 
 This function is similar to `diff_cleanupSemantic`, except that instead of optimising a diff to be human-readable, it optimises the diff to be efficient for machine processing. The results of both cleanup types are often the same.
 
-The efficiency cleanup is based on the observation that a diff made up of large numbers of small diffs edits may take longer to process (in downstream applications) or take more capacity to store or transmit than a smaller number of larger diffs. The `DiffMatchPatch.Diff_EditCost` property sets what the cost of handling a new edit is in terms of handling extra characters in an existing edit. The default value is 4, which means if expanding the length of a diff by three characters can eliminate one edit, then that optimisation will reduce the total costs.
+The efficiency cleanup is based on the observation that a diff made up of large numbers of small diffs edits may take longer to process (in downstream applications) or take more capacity to store or transmit than a smaller number of larger diffs. The `DiffMatchPatch.diffEditCost` property sets what the cost of handling a new edit is in terms of handling extra characters in an existing edit. The default value is 4, which means if expanding the length of a diff by three characters can eliminate one edit, then that optimisation will reduce the total costs.
 
 ### diff_levenshtein(diffs) → int
 
@@ -49,9 +49,9 @@ Takes a diff array and returns a pretty HTML sequence. This function is mainly i
 
 Given a text to search, a pattern to search for and an expected location in the text near which to find the pattern, return the location which matches closest. The function will search for the best match based on both the number of character errors between the pattern and the potential match, as well as the distance between the expected location and the potential match.
 
-The following example is a classic dilemma. There are two potential matches, one is close to the expected location but contains a one character error, the other is far from the expected location but is exactly the pattern sought after: `match_main("abc12345678901234567890abbc", "abc", 26)` Which result is returned (0 or 24) is determined by the `DiffMatchPatch.Match_Distance` property. An exact letter match which is 'distance' characters away from the fuzzy location would score as a complete mismatch. For example, a distance of '0' requires the match be at the exact location specified, whereas a threshold of '1000' would require a perfect match to be within 800 characters of the expected location to be found using a 0.8 threshold (see below). The larger Match_Distance is, the slower match_main() may take to compute. This variable defaults to 1000.
+The following example is a classic dilemma. There are two potential matches, one is close to the expected location but contains a one character error, the other is far from the expected location but is exactly the pattern sought after: `match_main("abc12345678901234567890abbc", "abc", 26)` Which result is returned (0 or 24) is determined by the `DiffMatchPatch.matchDistance` property. An exact letter match which is 'distance' characters away from the fuzzy location would score as a complete mismatch. For example, a distance of '0' requires the match be at the exact location specified, whereas a threshold of '1000' would require a perfect match to be within 800 characters of the expected location to be found using a 0.8 threshold (see below). The larger matchDistance is, the slower match_main() may take to compute. This variable defaults to 1000.
 
-Another property is `DiffMatchPatch.Match_Threshold` which determines the cut-off value for a valid match. If Match_Threshold is closer to 0, the requirements for accuracy increase. If Match_Threshold is closer to 1 then it is more likely that a match will be found. The larger Match_Threshold is, the slower match_main() may take to compute. This variable defaults to 0.5. If no match is found, the function returns -1.
+Another property is `DiffMatchPatch.matchThreshold` which determines the cut-off value for a valid match. If matchThreshold is closer to 0, the requirements for accuracy increase. If matchThreshold is closer to 1 then it is more likely that a match will be found. The larger matchThreshold is, the slower match_main() may take to compute. This variable defaults to 0.5. If no match is found, the function returns -1.
 
 ### patch_make(text1, text2) → patches
 
@@ -73,7 +73,7 @@ Parses a block of text (which was presumably created by the patch_toText functio
 
 Applies a list of patches to text1. The first element of the return value is the newly patched text. The second element is an array of true/false values indicating which of the patches were successfully applied. [Note that this second element is not too useful since large patches may get broken up internally, resulting in a longer results list than the input with no way to figure out which patch succeeded or failed. A more informative API is in development.]
 
-The previously mentioned Match_Distance and Match_Threshold properties are used to evaluate patch application on text which does not match exactly. In addition, the `DiffMatchPatch.Patch_DeleteThreshold` property determines how closely the text within a major (~64 character) delete needs to match the expected text. If Patch_DeleteThreshold is closer to 0, then the deleted text must match the expected text more closely. If Patch_DeleteThreshold is closer to 1, then the deleted text may contain anything. In most use cases Patch_DeleteThreshold should just be set to the same value as Match_Threshold.
+The previously mentioned matchDistance and matchThreshold properties are used to evaluate patch application on text which does not match exactly. In addition, the `DiffMatchPatch.patchDeleteThreshold` property determines how closely the text within a major (~64 character) delete needs to match the expected text. If patchDeleteThreshold is closer to 0, then the deleted text must match the expected text more closely. If patchDeleteThreshold is closer to 1, then the deleted text may contain anything. In most use cases patchDeleteThreshold should just be set to the same value as matchThreshold.
 
 
 ## Usage

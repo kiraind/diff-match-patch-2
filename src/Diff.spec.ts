@@ -108,7 +108,7 @@ test('testDiffCommonOverlap', t => {
 
 test('testDiffHalfMatch', t => {
   // Detect a halfmatch.
-  dmp.Diff_Timeout = 1
+  dmp.diffTimeout = 1
   // No match.
   t.equals(
     dmp.diff_halfMatch_('1234567890', 'abcdef'),
@@ -165,7 +165,7 @@ test('testDiffHalfMatch', t => {
   )
 
   // Optimal no halfmatch.
-  dmp.Diff_Timeout = 0
+  dmp.diffTimeout = 0
   t.equals(
     dmp.diff_halfMatch_('qHilloHelloHew', 'xHelloHeHulloy'),
     null
@@ -537,7 +537,7 @@ test('testDiffCleanupSemantic', t => {
 
 test('testDiffCleanupEfficiency', t => {
   // Cleanup operationally trivial equalities.
-  dmp.Diff_EditCost = 4
+  dmp.diffEditCost = 4
   // Null case.
   let diffs: Diff[] = []
   dmp.diff_cleanupEfficiency(diffs)
@@ -576,14 +576,14 @@ test('testDiffCleanupEfficiency', t => {
   )
 
   // High cost elimination.
-  dmp.Diff_EditCost = 5
+  dmp.diffEditCost = 5
   diffs = [[Operation.DIFF_DELETE, 'ab'], [Operation.DIFF_INSERT, '12'], [Operation.DIFF_EQUAL, 'wxyz'], [Operation.DIFF_DELETE, 'cd'], [Operation.DIFF_INSERT, '34']]
   dmp.diff_cleanupEfficiency(diffs)
   t.isEquivalent(
     diffs,
     [[Operation.DIFF_DELETE, 'abwxyzcd'], [Operation.DIFF_INSERT, '12wxyz34']]
   )
-  dmp.Diff_EditCost = 4
+  dmp.diffEditCost = 4
 
   t.end()
 })
@@ -774,7 +774,7 @@ test('testDiffMain', t => {
 
   // Perform a real diff.
   // Switch off the timeout.
-  dmp.Diff_Timeout = 0
+  dmp.diffTimeout = 0
   // Simple cases.
   t.isEquivalent(
     [[Operation.DIFF_DELETE, 'a'], [Operation.DIFF_INSERT, 'b']],
@@ -814,7 +814,7 @@ test('testDiffMain', t => {
   )
 
   // Timeout.
-  dmp.Diff_Timeout = 0.1 // 100ms
+  dmp.diffTimeout = 0.1 // 100ms
   let a = '`Twas brillig, and the slithy toves\nDid gyre and gimble in the wabe:\nAll mimsy were the borogoves,\nAnd the mome raths outgrabe.\n'
   let b = 'I am the very model of a modern major general,\nI\'ve information vegetable, animal, and mineral,\nI know the kings of England, and I quote the fights historical,\nFrom Marathon to Waterloo, in order categorical.\n'
   // Increase the text lengths by 1024 times to ensure a timeout.
@@ -826,12 +826,12 @@ test('testDiffMain', t => {
   dmp.diff_main(a, b)
   const endTime = (new Date()).getTime()
   // Test that we took at least the timeout period.
-  t.true(dmp.Diff_Timeout * 1000 <= endTime - startTime)
+  t.true(dmp.diffTimeout * 1000 <= endTime - startTime)
   // Test that we didn't take forever (be forgiving).
   // Theoretically this test could fail very occasionally if the
   // OS task swaps or locks up for a second at the wrong moment.
-  t.true(dmp.Diff_Timeout * 1000 * 2 > endTime - startTime)
-  dmp.Diff_Timeout = 0
+  t.true(dmp.diffTimeout * 1000 * 2 > endTime - startTime)
+  dmp.diffTimeout = 0
 
   // Test the linemode speedup.
   // Must be long to pass the 100 char cutoff.

@@ -79,7 +79,7 @@ test('testPatchToText', t => {
 })
 
 test('testPatchAddContext', t => {
-  dmp.Patch_Margin = 4
+  dmp.patchMargin = 4
   let p = dmp.patch_fromText('@@ -21,4 +21,10 @@\n-jump\n+somersault\n')[0]
   dmp.patch_addContext_(p, 'The quick brown fox jumps over the lazy dog.')
   t.equals(
@@ -198,7 +198,7 @@ test('testPatchMake', t => {
 })
 
 test('testPatchSplitMax', t => {
-  // Assumes that dmp.Match_MaxBits is 32.
+  // Assumes that dmp.matchMaxBits is 32.
   let patches = dmp.patch_make('abcdefghijklmnopqrstuvwxyz01234567890', 'XabXcdXefXghXijXklXmnXopXqrXstXuvXwxXyzX01X23X45X67X89X0')
   dmp.patch_splitMax(patches)
   t.equals(
@@ -272,9 +272,9 @@ test('testPatchAddPadding', t => {
 })
 
 test('testPatchApply', t => {
-  dmp.Match_Distance = 1000
-  dmp.Match_Threshold = 0.5
-  dmp.Patch_DeleteThreshold = 0.5
+  dmp.matchDistance = 1000
+  dmp.matchThreshold = 0.5
+  dmp.patchDeleteThreshold = 0.5
   // Null case.
   let patches = dmp.patch_make('', '')
   let results = dmp.patch_apply(patches, 'Hello world.')
@@ -322,26 +322,26 @@ test('testPatchApply', t => {
   )
 
   // Big delete, big change 2.
-  dmp.Patch_DeleteThreshold = 0.6
+  dmp.patchDeleteThreshold = 0.6
   patches = dmp.patch_make('x1234567890123456789012345678901234567890123456789012345678901234567890y', 'xabcy')
   results = dmp.patch_apply(patches, 'x12345678901234567890---------------++++++++++---------------12345678901234567890y')
   t.isEquivalent(
     results,
     ['xabcy', [true, true]]
   )
-  dmp.Patch_DeleteThreshold = 0.5
+  dmp.patchDeleteThreshold = 0.5
 
   // Compensate for failed patch.
-  dmp.Match_Threshold = 0.0
-  dmp.Match_Distance = 0
+  dmp.matchThreshold = 0.0
+  dmp.matchDistance = 0
   patches = dmp.patch_make('abcdefghijklmnopqrstuvwxyz--------------------1234567890', 'abcXXXXXXXXXXdefghijklmnopqrstuvwxyz--------------------1234567YYYYYYYYYY890')
   results = dmp.patch_apply(patches, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ--------------------1234567890')
   t.isEquivalent(
     results,
     ['ABCDEFGHIJKLMNOPQRSTUVWXYZ--------------------1234567YYYYYYYYYY890', [false, true]]
   )
-  dmp.Match_Threshold = 0.5
-  dmp.Match_Distance = 1000
+  dmp.matchThreshold = 0.5
+  dmp.matchDistance = 1000
 
   // No side effects.
   patches = dmp.patch_make('', 'test')

@@ -25,8 +25,8 @@ test('testMatchAlphabet', t => {
 
 test('testMatchBitap', t => {
   // Bitap algorithm.
-  dmp.Match_Distance = 100
-  dmp.Match_Threshold = 0.5
+  dmp.matchDistance = 100
+  dmp.matchThreshold = 0.5
 
   // Exact matches.
   t.equals(
@@ -62,26 +62,26 @@ test('testMatchBitap', t => {
   )
 
   // Threshold test.
-  dmp.Match_Threshold = 0.4
+  dmp.matchThreshold = 0.4
 
   t.equals(
     dmp.match_bitap_('abcdefghijk', 'efxyhi', 1),
     4
   )
 
-  dmp.Match_Threshold = 0.3
+  dmp.matchThreshold = 0.3
   t.equals(
     dmp.match_bitap_('abcdefghijk', 'efxyhi', 1),
     -1
   )
 
-  dmp.Match_Threshold = 0.0
+  dmp.matchThreshold = 0.0
   t.equals(
     dmp.match_bitap_('abcdefghijk', 'bcdef', 1),
     1
   )
 
-  dmp.Match_Threshold = 0.5
+  dmp.matchThreshold = 0.5
 
   // Multiple select.
   t.equals(
@@ -95,7 +95,7 @@ test('testMatchBitap', t => {
   )
 
   // Distance test.
-  dmp.Match_Distance = 10 // Strict location.
+  dmp.matchDistance = 10 // Strict location.
   t.equals(
     dmp.match_bitap_('abcdefghijklmnopqrstuvwxyz', 'abcdefg', 24),
     -1
@@ -106,7 +106,7 @@ test('testMatchBitap', t => {
     0
   )
 
-  dmp.Match_Distance = 1000 // Loose location.
+  dmp.matchDistance = 1000 // Loose location.
   t.equals(
     dmp.match_bitap_('abcdefghijklmnopqrstuvwxyz', 'abcdefg', 24),
     0
