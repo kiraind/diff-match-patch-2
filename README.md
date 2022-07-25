@@ -19,11 +19,31 @@ npm i diff-match-patch-2
 
 ### Initialization
 
-The first step is to create a new `DiffMatchPatch` object. This object contains various properties which set the behaviour of the algorithms, as well as the following methods/functions:
+The first step is to create a new `DiffMatchPatch` object. This object contains properties `diff`, `match` and `patch` containing different methods.
+
+```ts
+import DiffMatchPatch from 'diff-match-patch'
+
+const dmp = new DiffMatchPatch()
+```
+
+Construstor contains an optional argument with settings:
+
+* `timeout: number = 1.0` — Number of seconds to map a diff before giving up (0 for infinity).
+* `editCost: number = 4` — Cost of an empty edit operation in terms of edit characters.
+* `threshold: number = 0.5` — At what point is no match declared (0.0 = perfection, 1.0 = very loose).
+* `distance: number = 1000` — How far to search for a match (0 = exact location, 1000+ = broad match). A match this many characters away from the expected location will add 1.0 to the score (0.0 is a perfect match).
+* `maxBits: number = 32` — The number of bits in an int.
+* `deleteThreshold: number = 0.5` — When deleting a large block of text (over ~64 characters), how close do the contents have to be to match the expected contents. (0.0 = perfection, 1.0 = very loose). Note that `threshold` controls how closely the end points of a delete need to match.
+* `margin: number = 4` — Chunk size for context length.
+
+### Usage
+
+> See JSDoc comments
 
 ### .diff.main(text1, text2) → diffs
 
-An array of differences is computed which describe the transformation of text1 into text2. Each difference is an array (JavaScript, Lua) or tuple (Python) or Diff object (C++, C#, Objective C, Java). The first element specifies if it is an insertion (1), a deletion (-1) or an equality (0). The second element specifies the affected text.
+An array of differences is computed which describe the transformation of text1 into text2. Each difference is an `Diff` tuple. The first element specifies if it is an insertion (1), a deletion (-1) or an equality (0). The second element specifies the affected text.
 
 ```
 .diff.main("Good dog", "Bad dog") → [(-1, "Goo"), (1, "Ba"), (0, "d dog")]
@@ -78,15 +98,6 @@ Parses a block of text (which was presumably created by the patch.toText functio
 Applies a list of patches to text1. The first element of the return value is the newly patched text. The second element is an array of true/false values indicating which of the patches were successfully applied. [Note that this second element is not too useful since large patches may get broken up internally, resulting in a longer results list than the input with no way to figure out which patch succeeded or failed. A more informative API is in development.]
 
 The previously mentioned matchDistance and matchThreshold properties are used to evaluate patch application on text which does not match exactly. In addition, the `DiffMatchPatch.patch.deleteThreshold` property determines how closely the text within a major (~64 character) delete needs to match the expected text. If patchDeleteThreshold is closer to 0, then the deleted text must match the expected text more closely. If patchDeleteThreshold is closer to 1, then the deleted text may contain anything. In most use cases patchDeleteThreshold should just be set to the same value as matchThreshold.
-
-## Usage
-
-```ts
-import DiffMatchPatch from 'diff-match-patch'
-
-const dmp = new DiffMatchPatch()
-const diff = dmp.diff.main('dogs bark', 'cats bark')
-```
 
 ## License
 
